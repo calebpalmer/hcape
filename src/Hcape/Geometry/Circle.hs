@@ -5,8 +5,8 @@ module Hcape.Geometry.Circle
         ,intersecting
          )where
 
-import Geometry.Common (GReal)
-import Geometry.Vector
+import Hcape.Geometry.Common (GReal)
+import Hcape.Geometry.Vector
 
 data Circle =
   Circle {

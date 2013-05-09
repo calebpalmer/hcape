@@ -1,7 +1,7 @@
 module Hcape.Geometry.Physics where
 
-import Geometry.Vector
-import Geometry.Common
+import Hcape.Geometry.Vector
+import Hcape.Geometry.Common
 
 -- | integrate a vector by a timestep using Euler integration
 integrateVector :: Vector -- | the position vector
