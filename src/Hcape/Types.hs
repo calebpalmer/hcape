@@ -5,14 +5,10 @@ module Hcape.Types
        (
          ScreenConfig(..)
        ,GameState(..)
-       ,MyGame(..)
        ,DrawOrder(..)
        ,GameEvent(..)
        ,Drawable(..)
        ,AnyDrawable(..)
-       ,Paddle(..)
-       ,Ball(..)
-       ,runMyGame
        )
        
        where
@@ -35,28 +31,21 @@ data ScreenConfig = ScreenConfig {
   mainSurface :: Maybe Surface
   } deriving Show
              
-data GameState = GameState { 
+data GameState a = GameState  { 
   screenConfig :: ScreenConfig,
   eventQueue :: [GameEvent],
   lastGameUpdate :: Maybe UTCTime,
   timeStep :: Double,
-  sBall :: Ball,
-  sLeftPaddle :: Paddle,
-  sRightPaddle :: Paddle,
-  sDrawablesList :: [AnyDrawable]
-  
+  gameData :: a
   }
 
 -- Game types
-newtype MyGame a  = Game {
-  runGame :: StateT GameState (IO) a
-  } deriving (Monad, MonadIO, MonadState GameState)
+--newtype MyGame a  = Game {
+--  runGame :: StateT GameState (IO) a
+--  } deriving (Monad, MonadIO, MonadState GameState)
              
-runMyGame :: MyGame a -> GameState -> IO (a, GameState)
-runMyGame k myState = runStateT (runGame k) myState
-
-
-
+--runMyGame :: MyGame a -> GameState -> IO (a, GameState)
+--runMyGame k myState = runStateT (runGame k) myState
 
 data DrawOrder = DoBackground 
                | DoForeground
@@ -93,7 +82,6 @@ instance Drawable AnyDrawable where
   tag (AnyDrawable a) = tag a
   processEvents (AnyDrawable a) gameEvents tStep drawableList sConfig = AnyDrawable (processEvents a gameEvents tStep drawableList sConfig)
 
-
 instance Eq AnyDrawable where
   (==) a b = (drawOrder a) == (drawOrder b)
   (/=) a b = not $ a == b
@@ -106,31 +94,3 @@ instance Ord AnyDrawable where
   max a b = if a >= b then a else b
   min a b = if a < b then a else b
   compare a b = compare (drawOrder a) (drawOrder b)
-
-
--- paddle Type
-data Paddle = Paddle {
-  paddleDrawOrder :: DrawOrder,
-  paddleCoordinates :: Rect, -- | top left corner
-  paddleImageFile :: String,
-  paddleImageWidth :: Int,
-  paddleImageHeight :: Int,
-  paddleSurface :: Maybe Surface,
-  paddleVisible :: Bool,
-  paddlePosition :: Vector, -- | middle of the image
-  paddleVelocity :: Vector,
-  paddleTag :: String
-  }
-
--- ball type
-data Ball = Ball {
-  ballDrawOrder :: DrawOrder,
-  ballCoordinates :: Maybe Rect,
-  ballImageFile :: String,
-  ballSurface :: Maybe Surface,
-  ballVisible :: Bool,
-  ballPosition :: Vector,
-  ballVelocity :: Vector,
-  ballShape :: Shape,
-  ballTag :: String
-}
